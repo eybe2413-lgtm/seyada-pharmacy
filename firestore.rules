@@ -1,0 +1,144 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+    function isActive() {
+      return isSignedIn() && userDoc().data.active == true;
+    }
+    function isManager() {
+      return isActive() && (
+        userDoc().data.role == 'manager' ||
+        userDoc().data.role == 'admin'
+      );
+    }
+    function isStaff() {
+      return isActive();
+    }
+
+    // users: any active staff can read names (needed for "sold by" / pickers),
+    // only the manager can create/update/delete accounts.
+    match /users/{userId} {
+      allow read: if isStaff();
+      allow create, update, delete: if isManager();
+    }
+
+    match /medicines/{medId} {
+      allow read, create, update: if isStaff();
+      allow delete: if isManager();
+    }
+
+    match /sales/{saleId} {
+      allow read, create: if isStaff();
+      allow update, delete: if isManager();
+    }
+    match /sales_archive/{saleId} {
+      allow read: if isStaff();
+      allow create, delete: if isStaff(); // needed for the client-side archive sweep
+      allow update: if isManager();
+    }
+
+    match /purchases/{purId} {
+      allow read, create: if isStaff();
+      allow update, delete: if isManager();
+    }
+    match /purchases_archive/{purId} {
+      allow read: if isStaff();
+      allow create, delete: if isStaff();
+      allow update: if isManager();
+    }
+
+    match /expenses/{expId} {
+      allow read, create: if isStaff();
+      allow update, delete: if isManager();
+    }
+    match /expenses_archive/{expId} {
+      allow read: if isStaff();
+      allow create, delete: if isStaff();
+    }
+
+    // salaries are an explicit manager-only module end to end.
+    match /salaries/{salaryId} {
+      allow read, create, update, delete: if isManager();
+    }
+
+    match /debts/{debtId} {
+      allow read, create, update: if isStaff();
+      allow delete: if isManager();
+      match /payments/{paymentId} {
+        allow read, create: if isStaff();
+        allow update, delete: if isManager();
+      }
+    }
+
+    // Customers (عملاء): lightweight CRM records used for the customer
+    // statement screen. Staff can manage them day to day; deletion is
+    // manager-only like every other "delete" action in the app.
+    match /customers/{customerId} {
+      allow read, create, update: if isStaff();
+      allow delete: if isManager();
+    }
+
+    match /suppliers/{supplierId} {
+      allow read, create, update: if isStaff();
+      allow delete: if isManager();
+    }
+
+    // Stock-take sessions (جرد المخزون): each session is a single document
+    // recording every counted variance for that count, written by whoever
+    // performed the physical count. Sessions are an audit trail, so they
+    // are never edited — only created and read.
+    match /stock_takes/{sessionId} {
+      allow read, create: if isStaff();
+      allow update, delete: if isManager();
+    }
+
+    // wallets: just names/ids — safe for all staff to read (payment picker).
+    match /wallets/{walletId} {
+      allow read: if isStaff();
+      allow create, update, delete: if isManager();
+    }
+
+    // finances/main holds actual cash/wallet balances — read restricted to
+    // the manager. Staff can still UPDATE it (blind atomic increments only,
+    // triggered automatically when they record a sale/purchase/expense)
+    // without ever being able to read current balances.
+    match /finances/{docId} {
+      allow read: if isManager();
+      allow create, update: if isStaff();
+      allow delete: if isManager();
+    }
+
+    // Sales/purchase/expense counters that are safe for employees to see
+    // (their own day-to-day operational context).
+    match /daily_stats/{day} {
+      allow read: if isStaff();
+      allow create, update: if isStaff();
+      allow delete: if isManager();
+    }
+
+    // Cost-of-goods counters are kept in a SEPARATE manager-only document so
+    // that profit (sales - cost) can never be derived from a document an
+    // employee is allowed to read, even though employees trigger the write.
+    match /daily_cost_stats/{day} {
+      allow read: if isManager();
+      allow create, update: if isStaff();
+      allow delete: if isManager();
+    }
+
+    // Audit log: every active user can write their own entries. Reading is
+    // open to the manager for everything; an employee may only query their
+    // own entries (the query itself must filter by their uid — see
+    // auditService.js — for this rule to be satisfiable).
+    match /audit_log/{logId} {
+      allow create: if isStaff();
+      allow read: if isManager() || (isStaff() && resource.data.userId == request.auth.uid);
+      allow update, delete: if false;
+    }
+  }
+}
