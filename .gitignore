@@ -5,3 +5,4 @@ dist
 .DS_Store
 .firebase
 firebase-debug.log
+foticlient/ 
