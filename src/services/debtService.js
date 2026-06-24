@@ -9,8 +9,6 @@ import {
   orderBy,
   limit as fbLimit,
   startAfter,
-  startAt,
-  endAt,
   getDocs,
   increment,
 } from 'firebase/firestore';
@@ -85,13 +83,4 @@ export async function fetchAllDebtsPage({ cursor = null } = {}) {
 export async function fetchTotalUnpaidDebt() {
   const snap = await getDocs(query(col(), where('paid', '==', false)));
   return snap.docs.reduce((a, d) => a + (d.data().amount || 0), 0);
-}
-
-export async function searchDebts(text) {
-  const q = text.trim().toLowerCase();
-  if (!q) return [];
-  const snap = await getDocs(
-    query(col(), orderBy('personName_lower'), startAt(q), endAt(q + '\uf8ff'), fbLimit(20))
-  );
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }

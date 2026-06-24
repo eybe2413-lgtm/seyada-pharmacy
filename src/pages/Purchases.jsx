@@ -46,8 +46,16 @@ export default function Purchases() {
     };
   }, [debouncedQuery]);
 
+  function calcSellPrice(cost) {
+    const c = Number(cost);
+    if (!c) return '';
+    const margin = c <= 200 ? 1.25 : 1.15;
+    return String(Math.ceil(c * margin));
+  }
+
   function pickMedicine(med) {
-    setForm({ ...form, medicineId: med.id, medicineName: med.name, unitCost: String(med.costPrice || '') });
+    const unitCost = String(med.costPrice || '');
+    setForm({ ...form, medicineId: med.id, medicineName: med.name, unitCost, sellPrice: calcSellPrice(unitCost) });
     setQuery('');
     setResults([]);
   }
@@ -176,7 +184,7 @@ export default function Purchases() {
                 <Input type="number" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} />
               </Field>
               <Field label={t('purchases.unitCost')}>
-                <Input type="number" value={form.unitCost} onChange={(e) => setForm({ ...form, unitCost: e.target.value })} />
+                <Input type="number" value={form.unitCost} onChange={(e) => setForm({ ...form, unitCost: e.target.value, sellPrice: calcSellPrice(e.target.value) })} />
               </Field>
               <Field label={t('purchases.supplier')} hint={t('common.optional')}>
                 <Input value={form.supplier} onChange={(e) => setForm({ ...form, supplier: e.target.value })} />

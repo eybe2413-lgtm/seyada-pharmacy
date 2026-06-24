@@ -221,6 +221,8 @@ export default function Reports() {
           <Metric label={t('dashboard.totalDebts')} value={money(data.unpaidDebt, currency)} tone="danger" />
           <Metric label={t('dashboard.inventoryValue')} value={money(data.inventoryValue, currency)} />
           <Metric label={t('wallets.totalLiquidity')} value={money(data.totalLiquidity, currency)} />
+          <Metric label={t('wallets.cashBalance')} value={money(data.cash, currency)} tone='primary' />
+          <Metric label='مجموع المحافظ' value={money(Object.values(data.balances || {}).reduce((a, b) => a + b, 0), currency)} tone='primary' />
         </div>
       )}
 
