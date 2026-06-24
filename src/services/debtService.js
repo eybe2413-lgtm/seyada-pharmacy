@@ -84,3 +84,9 @@ export async function fetchTotalUnpaidDebt() {
   const snap = await getDocs(query(col(), where('paid', '==', false)));
   return snap.docs.reduce((a, d) => a + (d.data().amount || 0), 0);
 }
+
+export async function searchDebts(term) {
+  const snap = await getDocs(query(col(), where('paid', '==', false), orderBy('personName_lower')));
+  const lower = term.toLowerCase();
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() })).filter((d) => d.personName_lower?.includes(lower));
+}
