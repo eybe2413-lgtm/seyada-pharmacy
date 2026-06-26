@@ -91,3 +91,4 @@ export async function searchDebts(term) {
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }
 
+
