@@ -90,3 +90,4 @@ export async function searchDebts(term) {
   const snap = await getDocs(query(col(), where('personName_lower', '>=', lower), where('personName_lower', '<=', lower + '\uf8ff'), fbLimit(20)));
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }
+
