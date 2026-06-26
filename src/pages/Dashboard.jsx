@@ -168,7 +168,7 @@ export default function Dashboard() {
         )}
 
         {isManager && <StatCard icon={Wallet} tone="soft" label={t('dashboard.cashBalance')} value={money(finances.cash, currency)} />}
-        {isManager && <StatCard icon={Wallet} tone="soft" label={t('dashboard.totalLiquidity')} value={money(totalLiquidity, currency)} />}
+
         {isManager && <StatCard icon={Package} tone="soft" label={t('dashboard.inventoryValue')} value={money(inventoryValue, currency)} />}
         <StatCard icon={HandCoins} tone="danger" label={t('dashboard.totalDebts')} value={money(unpaidDebt, currency)} />
       </div>
