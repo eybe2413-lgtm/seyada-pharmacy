@@ -42,3 +42,9 @@ export async function fetchExpensesPage({ cursor = null, fromArchive = false } =
     hasMore: snap.docs.length === PAGE_SIZE,
   };
 }
+
+export async function fetchExpensesByDateRange(start, end) {
+  const q = query(collection(db, 'expenses'), where('date', '>=', start), where('date', '<', end), orderBy('date', 'desc'), fbLimit(500));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+}
