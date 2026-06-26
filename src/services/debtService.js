@@ -81,6 +81,11 @@ export async function fetchAllDebtsPage({ cursor = null } = {}) {
   };
 }
 
+export async function fetchTotalUnpaidDebt() {
+  const snap = await getDocs(query(col(), where('paid', '==', false)));
+  return snap.docs.reduce((a, d) => a + (d.data().amount || 0), 0);
+}
+
 export async function searchDebts(term) {
   const lower = term.toLowerCase();
   const snap = await getDocs(query(col(), where('personName_lower', '>=', lower), where('personName_lower', '<=', lower + '\uf8ff'), fbLimit(20)));
