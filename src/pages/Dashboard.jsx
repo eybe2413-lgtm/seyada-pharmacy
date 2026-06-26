@@ -2,14 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { ShoppingCart, Truck, TrendingUp, Package, Banknote, Wallet, HandCoins, AlertTriangle, Clock } from 'lucide-react';
+import { ShoppingCart, Truck, TrendingUp, Package, Banknote, Wallet, HandCoins, AlertTriangle, Clock, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import StatCard from '../components/StatCard';
 import { Card, Button, Badge, Spinner } from '../components/ui';
-import { fetchTodayStats, fetchTodayCost, fetchLast7DaysStats, fetchStatsRange, fetchCostRange, dayId } from '../services/statsService';
+import { fetchTodayStats, fetchTodayCost, fetchLast7DaysStats, fetchStatsRange, fetchCostRange } from '../services/statsService';
 import { fetchFinances } from '../services/financeService';
 import { fetchLowStockMedicines, fetchExpiringMedicines, fetchAllMedicinesForValuation } from '../services/medicineService';
 import { fetchTotalUnpaidDebt } from '../services/debtService';
+
+const PROFIT_PIN = '2413';
 
 function money(n, currency) {
   return (Number(n) || 0).toLocaleString('en-US') + ' ' + currency;
@@ -32,6 +34,12 @@ export default function Dashboard() {
   const [lowStock, setLowStock] = useState([]);
   const [expiring, setExpiring] = useState([]);
   const [trend, setTrend] = useState([]);
+
+  // حالة بطاقة الربح
+  const [profitVisible, setProfitVisible] = useState(false);
+  const [pinInput, setPinInput] = useState('');
+  const [pinError, setPinError] = useState(false);
+  const [showPinModal, setShowPinModal] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -72,10 +80,20 @@ export default function Dashboard() {
       setLoading(false);
     }
     load();
-    return () => {
-      active = false;
-    };
+    return () => { active = false; };
   }, [isManager]);
+
+  function handlePinSubmit() {
+    if (pinInput === PROFIT_PIN) {
+      setProfitVisible(true);
+      setShowPinModal(false);
+      setPinInput('');
+      setPinError(false);
+    } else {
+      setPinError(true);
+      setPinInput('');
+    }
+  }
 
   if (loading) {
     return (
@@ -86,11 +104,13 @@ export default function Dashboard() {
   }
 
   const totalLiquidity = finances.cash + Object.values(finances.balances || {}).reduce((a, b) => a + b, 0);
+  const todayProfit = today.totalSales - todayCost;
+  const monthProfit = monthSales - monthCost;
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-extrabold text-ink">مرحباً بكم في صيدلية السيادة-الفلوجة</h1>
+        <h1 className="text-xl font-extrabold text-ink">{t('dashboard.welcomeBack')}، {user?.name}</h1>
         <p className="text-sm text-sub">{new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
       </div>
 
@@ -106,8 +126,47 @@ export default function Dashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard icon={ShoppingCart} tone="primary" label={t('dashboard.dailySales')} value={money(today.totalSales, currency)} sub={`${today.saleCount} ${t('dashboard.operationsToday')}`} />
         <StatCard icon={TrendingUp} tone="soft" label={t('dashboard.monthlySales')} value={money(monthSales, currency)} />
-        {isManager && <StatCard icon={Banknote} tone="accent" label={t('dashboard.dailyProfit')} value={money(today.totalSales - todayCost, currency)} />}
-        {isManager && <StatCard icon={TrendingUp} tone="soft" label={t('dashboard.monthlyProfit')} value={money(monthSales - monthCost, currency)} />}
+
+        {/* التعديل ١١: بطاقة الربح الموحدة بكلمة سر */}
+        {isManager && (
+          <div
+            className="col-span-2 rounded-xl2 p-4 bg-white border border-line cursor-pointer"
+            onClick={() => !profitVisible && setShowPinModal(true)}
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-lg bg-accent/10">
+                  <TrendingUp size={16} className="text-accent" />
+                </div>
+                <span className="text-xs font-bold text-sub">الربح</span>
+              </div>
+              <button
+                onClick={(e) => { e.stopPropagation(); if (profitVisible) setProfitVisible(false); else setShowPinModal(true); }}
+                className="p-1.5 rounded-lg hover:bg-bg text-sub"
+              >
+                {profitVisible ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+            {profitVisible ? (
+              <div className="grid grid-cols-2 gap-3 mt-2">
+                <div className="bg-bg rounded-lg p-3">
+                  <p className="text-[11px] text-sub mb-1">ربح اليوم</p>
+                  <p className="text-base font-extrabold text-accent">{money(todayProfit, currency)}</p>
+                </div>
+                <div className="bg-bg rounded-lg p-3">
+                  <p className="text-[11px] text-sub mb-1">ربح الشهر</p>
+                  <p className="text-base font-extrabold text-accent">{money(monthProfit, currency)}</p>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center py-4 gap-2 text-sub">
+                <Eye size={18} />
+                <span className="text-sm font-semibold">اضغط لعرض الربح</span>
+              </div>
+            )}
+          </div>
+        )}
+
         {isManager && <StatCard icon={Wallet} tone="soft" label={t('dashboard.cashBalance')} value={money(finances.cash, currency)} />}
         {isManager && <StatCard icon={Wallet} tone="soft" label={t('dashboard.totalLiquidity')} value={money(totalLiquidity, currency)} />}
         {isManager && <StatCard icon={Package} tone="soft" label={t('dashboard.inventoryValue')} value={money(inventoryValue, currency)} />}
@@ -158,6 +217,36 @@ export default function Dashboard() {
           </div>
         </Card>
       </div>
+
+      {/* نافذة إدخال كلمة السر */}
+      {showPinModal && (
+        <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-xs text-center">
+            <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4">
+              <Eye size={22} className="text-accent" />
+            </div>
+            <p className="font-bold text-ink text-base mb-4">أدخل كلمة السر لعرض الربح</p>
+            <input
+              type="password"
+              value={pinInput}
+              onChange={(e) => { setPinInput(e.target.value); setPinError(false); }}
+              onKeyDown={(e) => e.key === 'Enter' && handlePinSubmit()}
+              placeholder="••••"
+              className="w-full border border-line rounded-xl px-4 py-3 text-center text-lg tracking-widest mb-3 outline-none focus:border-primary"
+              autoFocus
+            />
+            {pinError && <p className="text-xs text-danger mb-3">كلمة السر غير صحيحة</p>}
+            <div className="flex gap-3">
+              <button onClick={() => { setShowPinModal(false); setPinInput(''); setPinError(false); }} className="flex-1 py-2.5 rounded-xl border border-line text-sm font-bold text-ink">
+                إلغاء
+              </button>
+              <button onClick={handlePinSubmit} className="flex-1 py-2.5 rounded-xl bg-primary text-white text-sm font-bold">
+                تأكيد
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
