@@ -141,7 +141,7 @@ export default function Layout({ children }) {
 
       <div className="flex-1 flex flex-col min-w-0">
         <header className="h-16 bg-white border-b border-line flex items-center justify-between px-4 md:px-6 sticky top-0 z-30">
-          <button className="md:hidden text-ink" onClick={() => setDrawerOpen(true)}>
+          <button className="text-ink" onClick={() => setDrawerOpen(true)}>
             <Menu size={22} />
           </button>
           <div className="hidden md:block" />
