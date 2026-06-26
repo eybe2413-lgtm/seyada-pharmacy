@@ -1,10 +1,11 @@
-import { doc, collection, runTransaction, serverTimestamp, query, orderBy, limit as fbLimit, startAfter, getDocs, where, Timestamp } from 'firebase/firestore';
+import { doc, collection, runTransaction, serverTimestamp, query, orderBy, limit as fbLimit, startAfter, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { statsRef, increment } from './statsService';
 import { financeDocRef } from './financeService';
 import { logAction } from './auditService';
 
-export const EXPENSE_CATEGORIES = ['electricity', 'water', 'internet', 'breakfast', 'lunch', 'taxi', 'maintenance', 'other'];
+// التعديل ٨: إضافة "الإيجار الشهري"
+export const EXPENSE_CATEGORIES = ['electricity', 'water', 'internet', 'breakfast', 'lunch', 'taxi', 'maintenance', 'rent', 'other'];
 const PAGE_SIZE = 20;
 
 export async function recordExpense({ category, amount, description, paymentSource, user }) {
@@ -22,6 +23,7 @@ export async function recordExpense({ category, amount, description, paymentSour
       createdAt: serverTimestamp(),
     });
     tx.set(statsRef(), { totalExpenses: increment(amount), updatedAt: serverTimestamp() }, { merge: true });
+    // التعديل ٤: خصم النفقة من المحفظة أو الرصيد النقدي
     const field = paymentSource === 'cash' ? 'cash' : 'balances.' + paymentSource;
     tx.set(financeDocRef(), { [field]: increment(-amount), updatedAt: serverTimestamp() }, { merge: true });
   });
@@ -39,16 +41,4 @@ export async function fetchExpensesPage({ cursor = null, fromArchive = false } =
     lastDoc: snap.docs.length ? snap.docs[snap.docs.length - 1] : null,
     hasMore: snap.docs.length === PAGE_SIZE,
   };
-}
-
-export async function fetchExpensesByDateRange(start, end) {
-  const q = query(
-    collection(db, 'expenses'),
-    where('date', '>=', Timestamp.fromDate(start)),
-    where('date', '<', Timestamp.fromDate(end)),
-    orderBy('date', 'desc'),
-    fbLimit(1000)
-  );
-  const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }

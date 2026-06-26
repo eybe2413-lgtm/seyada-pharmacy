@@ -13,6 +13,7 @@ function money(n, currency) {
   return (Number(n) || 0).toLocaleString('en-US') + ' ' + currency;
 }
 
+// التعديل ٦: حذف sellPrice من emptyForm لعدم حساب المعادلة تلقائياً
 const emptyForm = { mode: 'existing', medicineId: null, medicineName: '', newName: '', newCategory: '', newBarcode: '', quantity: '', unitCost: '', sellPrice: '', expiryDate: '', supplier: '', batchNumber: '', paymentSource: 'cash' };
 
 export default function Purchases() {
@@ -46,16 +47,9 @@ export default function Purchases() {
     };
   }, [debouncedQuery]);
 
-  function calcSellPrice(cost) {
-    const c = Number(cost);
-    if (!c) return '';
-    const margin = c <= 200 ? 1.25 : 1.15;
-    return String(Math.ceil(c * margin));
-  }
-
   function pickMedicine(med) {
-    const unitCost = String(med.costPrice || '');
-    setForm({ ...form, medicineId: med.id, medicineName: med.name, unitCost, sellPrice: calcSellPrice(unitCost) });
+    // التعديل ٦: لا نحسب سعر البيع تلقائياً — يُدخل يدوياً
+    setForm({ ...form, medicineId: med.id, medicineName: med.name, unitCost: String(med.costPrice || ''), sellPrice: String(med.sellPrice || '') });
     setQuery('');
     setResults([]);
   }
@@ -74,6 +68,7 @@ export default function Purchases() {
         newMed: form.mode === 'new' ? { name: form.newName.trim(), category: form.newCategory.trim(), barcode: form.newBarcode.trim(), sellPrice: Number(form.sellPrice) || 0, expiryDate: form.expiryDate || null } : null,
         quantity,
         unitCost,
+        sellPrice: form.mode === 'existing' ? (Number(form.sellPrice) || null) : null,
         supplier: form.supplier.trim(),
         batchNumber: form.batchNumber.trim(),
         paymentSource: form.paymentSource,
@@ -126,7 +121,7 @@ export default function Purchases() {
                 <tr key={p.id} className="border-t border-line">
                   <td className="px-4 py-3 font-semibold text-ink">{p.medicineName}</td>
                   <td className="px-4 py-3">{p.quantity}</td>
-                  <td className="px-4 py-3 font-bold">{money(p.total, currency)}</td>
+                  <td className="px-4 py-3 font-bold text-danger">{money(p.total, currency)}</td>
                   <td className="px-4 py-3 text-sub hidden md:table-cell">{p.supplier || '—'}</td>
                   <td className="px-4 py-3 text-sub hidden sm:table-cell">{p.date?.toDate().toLocaleDateString()}</td>
                 </tr>
@@ -146,19 +141,25 @@ export default function Purchases() {
             </div>
 
             {form.mode === 'existing' ? (
-              <Field label={t('medicines.medicineName')}>
-                <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t('common.search')} />
-                {results.length > 0 && (
-                  <div className="mt-1.5 border border-line rounded-lg overflow-hidden divide-y divide-line">
-                    {results.map((m) => (
-                      <button key={m.id} type="button" onClick={() => pickMedicine(m)} className="w-full text-start px-3 py-2 text-sm hover:bg-bg">
-                        {m.name} — {t('medicines.quantity')}: {m.quantity}
-                      </button>
-                    ))}
-                  </div>
-                )}
-                {form.medicineId && <p className="text-xs font-bold text-primary mt-1.5">{form.medicineName}</p>}
-              </Field>
+              <div>
+                <Field label={t('medicines.medicineName')}>
+                  <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t('common.search')} />
+                  {results.length > 0 && (
+                    <div className="mt-1.5 border border-line rounded-lg overflow-hidden divide-y divide-line">
+                      {results.map((m) => (
+                        <button key={m.id} type="button" onClick={() => pickMedicine(m)} className="w-full text-start px-3 py-2 text-sm hover:bg-bg">
+                          {m.name} — {t('medicines.quantity')}: {m.quantity}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {form.medicineId && <p className="text-xs font-bold text-primary mt-1.5">{form.medicineName}</p>}
+                </Field>
+                {/* التعديل ٦: حقل سعر البيع يدوي بدون معادلة تلقائية */}
+                <Field label={t('medicines.salePrice')}>
+                  <Input type="number" value={form.sellPrice} onChange={(e) => setForm({ ...form, sellPrice: e.target.value })} />
+                </Field>
+              </div>
             ) : (
               <div className="grid sm:grid-cols-2 gap-x-4">
                 <Field label={t('medicines.medicineName')}>
@@ -184,7 +185,7 @@ export default function Purchases() {
                 <Input type="number" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} />
               </Field>
               <Field label={t('purchases.unitCost')}>
-                <Input type="number" value={form.unitCost} onChange={(e) => setForm({ ...form, unitCost: e.target.value, sellPrice: calcSellPrice(e.target.value) })} />
+                <Input type="number" value={form.unitCost} onChange={(e) => setForm({ ...form, unitCost: e.target.value })} />
               </Field>
               <Field label={t('purchases.supplier')} hint={t('common.optional')}>
                 <Input value={form.supplier} onChange={(e) => setForm({ ...form, supplier: e.target.value })} />

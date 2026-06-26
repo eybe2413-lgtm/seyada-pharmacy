@@ -7,7 +7,7 @@ import { logAction } from './auditService';
 
 const PAGE_SIZE = 20;
 
-export async function recordPurchase({ medicineId, newMed, quantity, unitCost, supplier, batchNumber, paymentSource, user }) {
+export async function recordPurchase({ medicineId, newMed, quantity, unitCost, sellPrice, supplier, batchNumber, paymentSource, user }) {
   const total = quantity * unitCost;
   const purRef = doc(collection(db, 'purchases'));
   let medicineName;
@@ -20,12 +20,17 @@ export async function recordPurchase({ medicineId, newMed, quantity, unitCost, s
       const data = snap.data();
       const newQty = data.quantity + quantity;
       medicineName = data.name;
-      tx.update(medRef, {
+      const updateData = {
         quantity: newQty,
         costPrice: unitCost,
         isLowStock: computeLowStock(newQty, data.lowStockThreshold),
         updatedAt: serverTimestamp(),
-      });
+      };
+      // التعديل ٦: تحديث سعر البيع يدوياً إذا أُدخل
+      if (sellPrice && Number(sellPrice) > 0) {
+        updateData.sellPrice = Number(sellPrice);
+      }
+      tx.update(medRef, updateData);
     } else {
       const medRef = doc(collection(db, 'medicines'));
       medicineName = newMed.name;

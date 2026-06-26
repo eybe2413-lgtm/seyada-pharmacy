@@ -42,8 +42,7 @@
     "saved": "تم الحفظ",
     "deleted": "تم الحذف",
     "actions": "إجراءات",
-    "deleteConfirm": "هل أنت متأكد من الحذف؟",
-    "description": "الوصف"
+    "logoutConfirm": "هل تريد تسجيل الخروج؟"
   },
   "nav": {
     "dashboard": "الرئيسية",
@@ -60,9 +59,7 @@
     "auditLog": "سجل العمليات",
     "settings": "الإعدادات",
     "stockTake": "جرد المخزون",
-    "customers": "العملاء",
-    "suppliers": "الموردون",
-    "accounts": "الحسابات"
+    "customers": "العملاء"
   },
   "auth": {
     "loginTitle": "صيدلية السيادة",
@@ -188,8 +185,7 @@
     "allDebts": "كل الديون",
     "noPayments": "لا توجد دفعات بعد",
     "paidStatus": "مسدد",
-    "unpaidStatus": "غير مسدد",
-    "searchByName": "البحث باسم العميل"
+    "unpaidStatus": "غير مسدد"
   },
   "wallets": {
     "title": "المحافظ والنقد",
@@ -199,7 +195,8 @@
     "walletName": "اسم المحفظة",
     "transactionHistory": "سجل الحركات",
     "editBalance": "تعديل الرصيد",
-    "totalLiquidity": "إجمالي السيولة"
+    "totalLiquidity": "إجمالي السيولة",
+    "openingBalance": "الرصيد الافتتاحي"
   },
   "expenses": {
     "title": "النفقات",
@@ -214,7 +211,7 @@
     "maintenance": "صيانة",
     "other": "أخرى",
     "recordedBy": "سجّلها",
-    "source": "مصدر الدفع"
+    "rent": "الإيجار الشهري"
   },
   "salaries": {
     "title": "الرواتب",
@@ -256,12 +253,14 @@
     "importNow": "استيراد الآن",
     "importSuccess": "تم استيراد الأدوية بنجاح",
     "importErrors": "صفوف بها أخطاء",
+    "columnBarcode": "الباركود",
     "columnName": "اسم الدواء",
     "columnPurchase": "سعر الشراء",
     "columnSale": "سعر البيع",
     "columnQuantity": "الكمية",
     "columnExpiry": "تاريخ الانتهاء",
-    "columnLot": "lot"
+    "columnScientific": "الاسم العلمي",
+    "columnCategory": "الفئة"
   },
   "users": {
     "title": "المستخدمون",
@@ -329,57 +328,5 @@
     "totalOwed": "المتبقي",
     "viewStatement": "عرض كشف الحساب",
     "addedSuccess": "تمت إضافة العميل"
-  },
-  "suppliers": {
-    "title": "الموردون",
-    "addSupplier": "إضافة مورد",
-    "editSupplier": "تعديل المورد",
-    "name": "اسم المورد",
-    "phone": "الهاتف",
-    "email": "البريد الإلكتروني",
-    "address": "العنوان",
-    "notes": "ملاحظات"
-  },
-  "accounts": {
-    "title": "الحسابات",
-    "subtitle": "ملخص مالي شامل للمبيعات والنفقات والمخزون",
-    "period": "الفترة",
-    "today": "اليوم",
-    "thisWeek": "هذا الأسبوع",
-    "thisMonth": "هذا الشهر",
-    "lastMonth": "الشهر الماضي",
-    "thisYear": "هذه السنة",
-    "custom": "فترة مخصصة",
-    "from": "من",
-    "to": "إلى",
-    "apply": "تطبيق",
-    "totalRevenue": "إجمالي الإيرادات",
-    "totalExpenses": "إجمالي النفقات",
-    "netProfit": "صافي الربح",
-    "totalDiscount": "إجمالي الخصومات",
-    "inventoryValue": "قيمة المخزون",
-    "totalMedicines": "عدد الأصناف",
-    "salesDetails": "تفاصيل المبيعات",
-    "expensesDetails": "تفاصيل النفقات",
-    "inventoryDetails": "تفاصيل المخزون",
-    "noSales": "لا توجد مبيعات في هذه الفترة",
-    "noExpenses": "لا توجد نفقات في هذه الفترة",
-    "items": "أصناف",
-    "exportExcel": "تصدير Excel",
-    "printPdf": "طباعة PDF",
-    "profitMargin": "هامش الربح",
-    "salesCount": "عدد الفواتير",
-    "expensesByCategory": "النفقات حسب الفئة",
-    "category": "الفئة",
-    "summaryTab": "الملخص",
-    "salesTab": "المبيعات",
-    "expensesTab": "النفقات",
-    "inventoryTab": "المخزون",
-    "costPrice": "سعر التكلفة",
-    "stockValue": "قيمة المخزون",
-    "sellValue": "قيمة البيع المتوقعة",
-    "debtSales": "مبيعات آجلة",
-    "cashSales": "مبيعات نقدية",
-    "walletSales": "محافظ إلكترونية"
   }
 }

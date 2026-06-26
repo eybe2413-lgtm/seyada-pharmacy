@@ -42,8 +42,7 @@
     "saved": "Enregistré",
     "deleted": "Supprimé",
     "actions": "Actions",
-    "deleteConfirm": "Confirmer la suppression ?",
-    "description": "Description"
+    "logoutConfirm": "Voulez-vous vous déconnecter ?"
   },
   "nav": {
     "dashboard": "Tableau de bord",
@@ -60,9 +59,7 @@
     "auditLog": "Journal d'activité",
     "settings": "Paramètres",
     "stockTake": "Inventaire",
-    "customers": "Clients",
-    "suppliers": "Fournisseurs",
-    "accounts": "Comptabilité"
+    "customers": "Clients"
   },
   "auth": {
     "loginTitle": "Pharmacie Seyada",
@@ -188,8 +185,7 @@
     "allDebts": "Toutes les dettes",
     "noPayments": "Aucun paiement pour le moment",
     "paidStatus": "Payé",
-    "unpaidStatus": "Non payé",
-    "searchByName": "Rechercher par nom"
+    "unpaidStatus": "Non payé"
   },
   "wallets": {
     "title": "Portefeuilles et espèces",
@@ -199,7 +195,8 @@
     "walletName": "Nom du portefeuille",
     "transactionHistory": "Historique des transactions",
     "editBalance": "Modifier le solde",
-    "totalLiquidity": "Liquidité totale"
+    "totalLiquidity": "Liquidité totale",
+    "openingBalance": "Solde initial"
   },
   "expenses": {
     "title": "Dépenses",
@@ -214,7 +211,7 @@
     "maintenance": "Maintenance",
     "other": "Autre",
     "recordedBy": "Enregistré par",
-    "source": "Source de paiement"
+    "rent": "Loyer mensuel"
   },
   "salaries": {
     "title": "Salaires",
@@ -256,12 +253,14 @@
     "importNow": "Importer maintenant",
     "importSuccess": "Médicaments importés avec succès",
     "importErrors": "lignes contenant des erreurs",
+    "columnBarcode": "Code-barres",
     "columnName": "Nom du médicament",
     "columnPurchase": "Prix d'achat",
     "columnSale": "Prix de vente",
     "columnQuantity": "Quantité",
     "columnExpiry": "Date d'expiration",
-    "columnLot": "lot"
+    "columnScientific": "Nom scientifique",
+    "columnCategory": "Catégorie"
   },
   "users": {
     "title": "Utilisateurs",
@@ -329,57 +328,5 @@
     "totalOwed": "Solde restant",
     "viewStatement": "Voir le relevé",
     "addedSuccess": "Client ajouté"
-  },
-  "suppliers": {
-    "title": "Fournisseurs",
-    "addSupplier": "Ajouter un fournisseur",
-    "editSupplier": "Modifier le fournisseur",
-    "name": "Nom du fournisseur",
-    "phone": "Téléphone",
-    "email": "E-mail",
-    "address": "Adresse",
-    "notes": "Notes"
-  },
-  "accounts": {
-    "title": "Comptabilité",
-    "subtitle": "Résumé financier complet : ventes, dépenses et stock",
-    "period": "Période",
-    "today": "Aujourd'hui",
-    "thisWeek": "Cette semaine",
-    "thisMonth": "Ce mois",
-    "lastMonth": "Mois dernier",
-    "thisYear": "Cette année",
-    "custom": "Période personnalisée",
-    "from": "Du",
-    "to": "Au",
-    "apply": "Appliquer",
-    "totalRevenue": "Chiffre d'affaires",
-    "totalExpenses": "Total des dépenses",
-    "netProfit": "Bénéfice net",
-    "totalDiscount": "Total des remises",
-    "inventoryValue": "Valeur du stock",
-    "totalMedicines": "Nombre d'articles",
-    "salesDetails": "Détail des ventes",
-    "expensesDetails": "Détail des dépenses",
-    "inventoryDetails": "Détail du stock",
-    "noSales": "Aucune vente sur cette période",
-    "noExpenses": "Aucune dépense sur cette période",
-    "items": "articles",
-    "exportExcel": "Exporter Excel",
-    "printPdf": "Imprimer PDF",
-    "profitMargin": "Marge bénéficiaire",
-    "salesCount": "Nombre de factures",
-    "expensesByCategory": "Dépenses par catégorie",
-    "category": "Catégorie",
-    "summaryTab": "Résumé",
-    "salesTab": "Ventes",
-    "expensesTab": "Dépenses",
-    "inventoryTab": "Stock",
-    "costPrice": "Prix de revient",
-    "stockValue": "Valeur du stock",
-    "sellValue": "Valeur de vente estimée",
-    "debtSales": "Ventes à crédit",
-    "cashSales": "Ventes en espèces",
-    "walletSales": "Portefeuilles électroniques"
   }
 }

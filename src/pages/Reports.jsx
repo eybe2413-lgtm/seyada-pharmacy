@@ -44,10 +44,6 @@ async function fetchDebtsCreatedInRange(start, end) {
   return snap.docs.reduce((a, d) => a + (d.data().originalAmount || d.data().amount || 0), 0);
 }
 
-// Sales documents store their line items inline, so "top sellers" for a
-// period is computed by aggregating those items client-side rather than
-// from a separate counter. fetchSalesByDateRange caps at 500 sales, which
-// is an acceptable bound for a single report run (not a live dashboard).
 function aggregateTopSellers(sales, topN = 10) {
   const byMedicine = new Map();
   sales.forEach((s) => {
@@ -74,7 +70,6 @@ export default function Reports() {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    // Reset anchor to a sensible default whenever the period type changes.
     if (periodType === 'daily') setAnchor(today.toISOString().slice(0, 10));
     if (periodType === 'monthly') setAnchor(today.toISOString().slice(0, 7));
     if (periodType === 'yearly') setAnchor(String(today.getFullYear()));
@@ -115,7 +110,6 @@ export default function Reports() {
     const inventoryValue = medicines.reduce((a, m) => a + (m.quantity || 0) * (m.costPrice || 0), 0);
     const lowStockCount = medicines.filter((m) => m.isLowStock).length;
     const expiredCount = medicines.filter((m) => m.expiryDate && m.expiryDate.toDate() < new Date()).length;
-    const totalLiquidity = finances.cash + Object.values(finances.balances || {}).reduce((a, b) => a + b, 0);
 
     setData({
       totalSales,
@@ -133,8 +127,6 @@ export default function Reports() {
       cash: finances.cash,
       balances: finances.balances || {},
       walletNames: Object.fromEntries(wallets.map((w) => [w.id, w.name])),
-      totalLiquidity,
-      topSellers: aggregateTopSellers(periodSales),
     });
     setLoading(false);
   }, [periodType, anchor]);
@@ -158,7 +150,6 @@ export default function Reports() {
       { label: t('medicines.lowStock'), value: data.lowStockCount },
       { label: t('medicines.expired'), value: data.expiredCount },
       { label: t('wallets.cashBalance'), value: money(data.cash, currency) },
-      { label: t('wallets.totalLiquidity'), value: money(data.totalLiquidity, currency) },
     ];
   }
 
@@ -220,9 +211,8 @@ export default function Reports() {
           <Metric label={t('salaries.title')} value={money(data.totalSalaries, currency)} />
           <Metric label={t('dashboard.totalDebts')} value={money(data.unpaidDebt, currency)} tone="danger" />
           <Metric label={t('dashboard.inventoryValue')} value={money(data.inventoryValue, currency)} />
-          <Metric label={t('wallets.totalLiquidity')} value={money(data.totalLiquidity, currency)} />
-          <Metric label={t('wallets.cashBalance')} value={money(data.cash, currency)} tone='primary' />
-          <Metric label='مجموع المحافظ' value={money(Object.values(data.balances || {}).reduce((a, b) => a + b, 0), currency)} tone='primary' />
+          {/* التعديل ٣: الرصيد النقدي فقط بدون إجمالي السيولة */}
+          <Metric label={t('wallets.cashBalance')} value={money(data.cash, currency)} />
         </div>
       )}
 

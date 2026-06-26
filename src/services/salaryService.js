@@ -49,8 +49,9 @@ export async function paySalaryInstallment({ employeeUid, employeeName, month, a
       },
       { merge: true }
     );
+    // التعديل ٩: خصم الراتب من المحفظة المختارة
     const field = source === 'cash' ? 'cash' : 'balances.' + source;
-    tx.update(financeDocRef(), { [field]: increment(-amount), updatedAt: serverTimestamp() });
+    tx.set(financeDocRef(), { [field]: increment(-amount), updatedAt: serverTimestamp() }, { merge: true });
   });
 
   logAction({ user, action: 'salary.pay', target: employeeName, details: `دفعة راتب ${amount} لشهر ${month}` });

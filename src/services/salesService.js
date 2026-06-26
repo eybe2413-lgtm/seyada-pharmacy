@@ -64,6 +64,7 @@ export async function recordSale({ cart, paymentMethod, customer, walletId, disc
         createdAt: serverTimestamp(),
       });
     } else {
+      // التعديل ١: تحديث المحفظة أو الرصيد النقدي عند البيع
       const field = paymentMethod === 'cash' ? 'cash' : 'balances.' + walletId;
       tx.set(financeDocRef(), { [field]: increment(total), updatedAt: serverTimestamp() }, { merge: true });
     }
