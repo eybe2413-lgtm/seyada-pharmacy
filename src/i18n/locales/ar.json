@@ -59,7 +59,9 @@
     "auditLog": "سجل العمليات",
     "settings": "الإعدادات",
     "stockTake": "جرد المخزون",
-    "customers": "العملاء"
+    "customers": "العملاء",
+    "suppliers": "الموردون",
+    "accounts": "الحسابات"
   },
   "auth": {
     "loginTitle": "صيدلية السيادة",

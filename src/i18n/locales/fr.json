@@ -59,7 +59,9 @@
     "auditLog": "Journal d'activité",
     "settings": "Paramètres",
     "stockTake": "Inventaire",
-    "customers": "Clients"
+    "customers": "Clients",
+    "suppliers": "Fournisseurs",
+    "accounts": "Comptes"
   },
   "auth": {
     "loginTitle": "Pharmacie Seyada",
