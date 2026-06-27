@@ -65,7 +65,7 @@ export async function recordSale({ cart, paymentMethod, customer, walletId, disc
       });
     } else {
       const field = paymentMethod === 'cash' ? 'cash' : 'balances.' + walletId;
-      tx.update(financeDocRef(), { [field]: increment(-total), updatedAt: serverTimestamp() });
+      tx.update(financeDocRef(), { [field]: increment(total), updatedAt: serverTimestamp() });
     }
   });
 
