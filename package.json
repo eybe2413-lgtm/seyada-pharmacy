@@ -33,8 +33,5 @@
   },
   "engines": {
     "node": ">=18"
-  },
-  "overrides": {
-    "vite-plugin-pwa": null
   }
 }
