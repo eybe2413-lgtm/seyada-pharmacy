@@ -1,4 +1,4 @@
-import {
+﻿import {
   doc,
   collection,
   addDoc,
@@ -46,7 +46,6 @@ export async function addDebtPayment({ debtId, amount, source, user }) {
     const remaining = Math.max(0, data.amount - amount);
     tx.update(debtRef, { amount: remaining, paid: remaining <= 0, updatedAt: serverTimestamp() });
     tx.set(paymentRef, { amount, source, date: serverTimestamp(), recordedByUid: user.uid, recordedByName: user.name });
-    // التعديل ٥: خصم تسديد الدين من المحفظة المختارة
     const field = source === 'cash' ? 'cash' : 'balances.' + source;
     tx.set(financeDocRef(), { [field]: increment(amount), updatedAt: serverTimestamp() }, { merge: true });
   });
@@ -88,6 +87,8 @@ export async function fetchTotalUnpaidDebt() {
 
 export async function searchDebts(term) {
   const lower = term.toLowerCase();
-  const snap = await getDocs(query(col(), where('personName_lower', '>=', lower), where('personName_lower', '<=', lower + '\uf8ff'), fbLimit(20)));
+  const snap = await getDocs(
+    query(col(), where('personName_lower', '>=', lower), where('personName_lower', '<=', lower + ''), fbLimit(20))
+  );
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }

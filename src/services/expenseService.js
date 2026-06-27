@@ -1,10 +1,9 @@
-import { doc, collection, runTransaction, serverTimestamp, query, orderBy, limit as fbLimit, startAfter, getDocs } from 'firebase/firestore';
+import { doc, collection, runTransaction, serverTimestamp, query, orderBy, limit as fbLimit, startAfter, getDocs, where } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { statsRef, increment } from './statsService';
 import { financeDocRef } from './financeService';
 import { logAction } from './auditService';
 
-// التعديل ٨: إضافة "الإيجار الشهري"
 export const EXPENSE_CATEGORIES = ['electricity', 'water', 'internet', 'breakfast', 'lunch', 'taxi', 'maintenance', 'rent', 'other'];
 const PAGE_SIZE = 20;
 
@@ -23,7 +22,6 @@ export async function recordExpense({ category, amount, description, paymentSour
       createdAt: serverTimestamp(),
     });
     tx.set(statsRef(), { totalExpenses: increment(amount), updatedAt: serverTimestamp() }, { merge: true });
-    // التعديل ٤: خصم النفقة من المحفظة أو الرصيد النقدي
     const field = paymentSource === 'cash' ? 'cash' : 'balances.' + paymentSource;
     tx.set(financeDocRef(), { [field]: increment(-amount), updatedAt: serverTimestamp() }, { merge: true });
   });

@@ -1,26 +1,39 @@
 @echo off
-echo ========================================
-echo    صيدلية السيادة - Pharmacie Seyada
-echo    Build and Deploy
-echo ========================================
+echo ================================
+echo   صيدلية السيادة - Firebase Deploy
+echo ================================
 echo.
 
-echo [1/3] Installing dependencies...
+cd /d "%~dp0"
+
+echo [1/3] تثبيت المكتبات...
 call npm install
-if %errorlevel% neq 0 ( echo ERROR: npm install failed & pause & exit /b 1 )
+if errorlevel 1 (
+    echo خطأ في npm install
+    pause
+    exit /b 1
+)
 
 echo.
-echo [2/3] Building for production...
+echo [2/3] بناء المشروع...
 call npm run build
-if %errorlevel% neq 0 ( echo ERROR: Build failed & pause & exit /b 1 )
+if errorlevel 1 (
+    echo خطأ في البناء
+    pause
+    exit /b 1
+)
 
 echo.
-echo [3/3] Deploying to Firebase...
-call npx firebase deploy
-if %errorlevel% neq 0 ( echo ERROR: Deploy failed & pause & exit /b 1 )
+echo [3/3] رفع على Firebase...
+call npx firebase deploy --only hosting
+if errorlevel 1 (
+    echo خطأ في الرفع
+    pause
+    exit /b 1
+)
 
 echo.
-echo ========================================
-echo SUCCESS! App is live on Firebase!
-echo ========================================
+echo ================================
+echo   تم النشر بنجاح!
+echo ================================
 pause
