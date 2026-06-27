@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { Plus, Banknote, Wallet as WalletIcon, Pencil, RefreshCw } from 'lucide-react';
 import { Button, Card, Field, Input, Modal, Spinner, Badge } from '../components/ui';
 import { fetchWallets, addWallet, subscribeFinances, setCashBalance, setWalletBalance, fetchWalletTransactions, ensureDefaultWallets, deduplicateWallets } from '../services/financeService';
-import { fetchTotalUnpaidDebt } from '../services/debtService';
 
 function money(n, currency) {
   return (Number(n) || 0).toLocaleString('en-US') + ' ' + currency;
@@ -14,7 +13,6 @@ export default function Wallets() {
   const currency = t('common.currency');
   const [wallets, setWallets] = useState([]);
   const [finances, setFinances] = useState({ cash: 0, balances: {} });
-  const [unpaidDebt, setUnpaidDebt] = useState(0);
   const [loading, setLoading] = useState(true);
   const [editTarget, setEditTarget] = useState(null);
   const [historyTarget, setHistoryTarget] = useState(null);
@@ -37,9 +35,8 @@ export default function Wallets() {
   const load = useCallback(async () => {
     // Auto-clean duplicates from any previous race condition on first-ever load
     await deduplicateWallets().catch(() => {});
-    const [w, debt] = await Promise.all([fetchWallets(), fetchTotalUnpaidDebt()]);
+    const w = await fetchWallets();
     setWallets(w);
-    setUnpaidDebt(debt);
   }, []);
 
   useEffect(() => {
@@ -105,8 +102,8 @@ export default function Wallets() {
           <p className="text-2xl font-extrabold mt-1">{money(totalLiquidity, currency)}</p>
         </Card>
         <Card className="p-5">
-          <p className="text-xs font-semibold text-sub">{t('dashboard.totalDebts')}</p>
-          <p className="text-2xl font-extrabold mt-1 text-danger">{money(unpaidDebt, currency)}</p>
+          <p className="text-xs font-semibold text-sub">إجمالي المحافظ والنقدي</p>
+          <p className="text-2xl font-extrabold mt-1 text-primary">{money(totalLiquidity, currency)}</p>
         </Card>
       </div>
 
