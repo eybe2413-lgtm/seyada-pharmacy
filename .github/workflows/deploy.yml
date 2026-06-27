@@ -22,7 +22,7 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          VITE_FIREBASE_API_KEY: AIzaSyDI2JDmE5FLxYu1boTfirIMZM_FhwyLaJY
+          VITE_FIREBASE_API_KEY: AIzaSyDI2JDmE5FLxYulboTfirIMZM_FhwyLaJY
           VITE_FIREBASE_AUTH_DOMAIN: seyade-pharmacy.firebaseapp.com
           VITE_FIREBASE_PROJECT_ID: seyade-pharmacy
           VITE_FIREBASE_STORAGE_BUCKET: seyade-pharmacy.firebasestorage.app
