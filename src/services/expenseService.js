@@ -23,7 +23,7 @@ export async function recordExpense({ category, amount, description, paymentSour
     });
     tx.set(statsRef(), { totalExpenses: increment(amount), updatedAt: serverTimestamp() }, { merge: true });
     const field = paymentSource === 'cash' ? 'cash' : 'balances.' + paymentSource;
-    tx.set(financeDocRef(), { [field]: increment(-amount), updatedAt: serverTimestamp() }, { merge: true });
+    tx.update(financeDocRef(), { [field]: increment(-amount), updatedAt: serverTimestamp() });
   });
 
   logAction({ user, action: 'expense.create', target: expRef.id, details: `${category}: ${amount}` });

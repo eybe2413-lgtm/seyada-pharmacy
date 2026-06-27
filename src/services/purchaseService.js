@@ -70,7 +70,7 @@ export async function recordPurchase({ medicineId, newMed, quantity, unitCost, s
     tx.set(statsRef(), { totalPurchases: increment(total), updatedAt: serverTimestamp() }, { merge: true });
 
     const field = paymentSource === 'cash' ? 'cash' : 'balances.' + paymentSource;
-    tx.set(financeDocRef(), { [field]: increment(-total), updatedAt: serverTimestamp() }, { merge: true });
+    tx.update(financeDocRef(), { [field]: increment(-total), updatedAt: serverTimestamp() });
   });
 
   logAction({ user, action: 'purchase.create', target: purRef.id, details: `شراء ${medicineName} ×${quantity} بقيمة ${total}` });

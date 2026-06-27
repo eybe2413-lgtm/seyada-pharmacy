@@ -35,7 +35,7 @@ export async function addWallet(name) {
   const ref = doc(walletsColRef());
   const batch = writeBatch(db);
   batch.set(ref, { name, createdAt: serverTimestamp() });
-  batch.set(financeDocRef(), { ['balances.' + ref.id]: 0 }, { merge: true });
+  batch.update(financeDocRef(), { ['balances.' + ref.id]: 0 });
   await batch.commit();
   return ref.id;
 }
@@ -50,12 +50,12 @@ export async function setCashBalance(value) {
 }
 
 export async function setWalletBalance(walletId, value) {
-  await setDoc(financeDocRef(), { ['balances.' + walletId]: value, updatedAt: serverTimestamp() }, { merge: true });
+  await updateDoc(financeDocRef(), { ['balances.' + walletId]: value, updatedAt: serverTimestamp() });
 }
 
 export async function adjustFinanceSource(source, amount) {
   const field = source === 'cash' ? 'cash' : 'balances.' + source;
-  await setDoc(financeDocRef(), { [field]: increment(amount), updatedAt: serverTimestamp() }, { merge: true });
+  await updateDoc(financeDocRef(), { [field]: increment(amount), updatedAt: serverTimestamp() });
 }
 
 export { financeDocRef };

@@ -47,7 +47,7 @@ export async function addDebtPayment({ debtId, amount, source, user }) {
     tx.update(debtRef, { amount: remaining, paid: remaining <= 0, updatedAt: serverTimestamp() });
     tx.set(paymentRef, { amount, source, date: serverTimestamp(), recordedByUid: user.uid, recordedByName: user.name });
     const field = source === 'cash' ? 'cash' : 'balances.' + source;
-    tx.set(financeDocRef(), { [field]: increment(-amount), updatedAt: serverTimestamp() }, { merge: true });
+    tx.update(financeDocRef(), { [field]: increment(-amount), updatedAt: serverTimestamp() });
   });
 
   logAction({ user, action: 'debt.payment', target: debtId, details: `دفعة ${amount}` });
