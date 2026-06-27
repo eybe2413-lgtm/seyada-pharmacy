@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, updateDoc, increment, serverTimestamp, collection, addDoc, getDocs, query, orderBy, where, limit as fbLimit, writeBatch } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, onSnapshot, increment, serverTimestamp, collection, addDoc, getDocs, query, orderBy, where, limit as fbLimit, writeBatch } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
 const financeDocRef = () => doc(db, 'finances', 'main');
@@ -59,6 +59,15 @@ export async function adjustFinanceSource(source, amount) {
 }
 
 export { financeDocRef };
+
+export function subscribeFinances(callback) {
+  return onSnapshot(financeDocRef(), (snap) => {
+    if (snap.exists()) {
+      const d = snap.data();
+      callback({ cash: d.cash || 0, balances: d.balances || {} });
+    }
+  });
+}
 
 export async function deduplicateWallets() {
   const snap = await getDocs(query(walletsColRef(), orderBy('createdAt')));

@@ -127,6 +127,7 @@ export default function Reports() {
       cash: finances.cash,
       balances: finances.balances || {},
       walletNames: Object.fromEntries(wallets.map((w) => [w.id, w.name])),
+      topSellers: aggregateTopSellers(periodSales),
     });
     setLoading(false);
   }, [periodType, anchor]);

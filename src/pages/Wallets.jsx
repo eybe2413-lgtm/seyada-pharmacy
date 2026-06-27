@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus, Banknote, Wallet as WalletIcon, Pencil, RefreshCw } from 'lucide-react';
 import { Button, Card, Field, Input, Modal, Spinner, Badge } from '../components/ui';
-import { fetchWallets, addWallet, fetchFinances, setCashBalance, setWalletBalance, fetchWalletTransactions, ensureDefaultWallets, deduplicateWallets } from '../services/financeService';
+import { fetchWallets, addWallet, subscribeFinances, setCashBalance, setWalletBalance, fetchWalletTransactions, ensureDefaultWallets, deduplicateWallets } from '../services/financeService';
 import { fetchTotalUnpaidDebt } from '../services/debtService';
 
 function money(n, currency) {
@@ -37,15 +37,20 @@ export default function Wallets() {
   const load = useCallback(async () => {
     // Auto-clean duplicates from any previous race condition on first-ever load
     await deduplicateWallets().catch(() => {});
-    const [w, f, debt] = await Promise.all([fetchWallets(), fetchFinances(), fetchTotalUnpaidDebt()]);
+    const [w, debt] = await Promise.all([fetchWallets(), fetchTotalUnpaidDebt()]);
     setWallets(w);
-    setFinances(f);
     setUnpaidDebt(debt);
   }, []);
 
   useEffect(() => {
     load().finally(() => setLoading(false));
   }, [load]);
+
+  // Real-time listener: balance updates instantly after any sale / purchase / expense
+  useEffect(() => {
+    const unsub = subscribeFinances(setFinances);
+    return () => unsub();
+  }, []);
 
   async function openHistory(source, label) {
     setHistoryTarget(label);

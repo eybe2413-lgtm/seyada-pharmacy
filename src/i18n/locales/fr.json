@@ -42,7 +42,8 @@
     "saved": "Enregistré",
     "deleted": "Supprimé",
     "actions": "Actions",
-    "logoutConfirm": "Voulez-vous vous déconnecter ?"
+    "logoutConfirm": "Voulez-vous vous déconnecter ?",
+    "description": "Description"
   },
   "nav": {
     "dashboard": "Tableau de bord",
@@ -213,7 +214,8 @@
     "maintenance": "Maintenance",
     "other": "Autre",
     "recordedBy": "Enregistré par",
-    "rent": "Loyer mensuel"
+    "rent": "Loyer mensuel",
+    "source": "Source de paiement"
   },
   "salaries": {
     "title": "Salaires",
@@ -330,5 +332,42 @@
     "totalOwed": "Solde restant",
     "viewStatement": "Voir le relevé",
     "addedSuccess": "Client ajouté"
+  },
+  "accounts": {
+    "title": "Comptes",
+    "subtitle": "Analyse financière complète des ventes, dépenses et stock",
+    "totalRevenue": "Chiffre d'affaires",
+    "totalDiscount": "Remises totales",
+    "totalExpenses": "Total des dépenses",
+    "netProfit": "Bénéfice net",
+    "exportExcel": "Exporter Excel",
+    "printPdf": "Imprimer PDF",
+    "today": "Aujourd'hui",
+    "thisWeek": "Cette semaine",
+    "thisMonth": "Ce mois",
+    "lastMonth": "Mois dernier",
+    "thisYear": "Cette année",
+    "custom": "Période personnalisée",
+    "from": "Du",
+    "to": "Au",
+    "apply": "Appliquer",
+    "summaryTab": "Résumé",
+    "salesTab": "Ventes",
+    "expensesTab": "Dépenses",
+    "inventoryTab": "Stock",
+    "cashSales": "Ventes en espèces",
+    "walletSales": "Ventes par portefeuille",
+    "debtSales": "Ventes à crédit",
+    "expensesByCategory": "Dépenses par catégorie",
+    "category": "Catégorie",
+    "salesDetails": "Détail des ventes",
+    "noSales": "Aucune vente sur cette période",
+    "expensesDetails": "Détail des dépenses",
+    "noExpenses": "Aucune dépense sur cette période",
+    "inventoryDetails": "Détail du stock",
+    "stockValue": "Valeur du stock",
+    "salesCount": "Nombre de factures",
+    "totalMedicines": "Nombre d'articles",
+    "inventoryValue": "Valeur du stock (coût)"
   }
 }

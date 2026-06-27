@@ -42,7 +42,8 @@
     "saved": "تم الحفظ",
     "deleted": "تم الحذف",
     "actions": "إجراءات",
-    "logoutConfirm": "هل تريد تسجيل الخروج؟"
+    "logoutConfirm": "هل تريد تسجيل الخروج؟",
+    "description": "الوصف"
   },
   "nav": {
     "dashboard": "الرئيسية",
@@ -213,7 +214,8 @@
     "maintenance": "صيانة",
     "other": "أخرى",
     "recordedBy": "سجّلها",
-    "rent": "الإيجار الشهري"
+    "rent": "الإيجار الشهري",
+    "source": "مصدر الدفع"
   },
   "salaries": {
     "title": "الرواتب",
@@ -330,5 +332,42 @@
     "totalOwed": "المتبقي",
     "viewStatement": "عرض كشف الحساب",
     "addedSuccess": "تمت إضافة العميل"
+  },
+  "accounts": {
+    "title": "الحسابات",
+    "subtitle": "تحليل مالي شامل للمبيعات والنفقات والمخزون",
+    "totalRevenue": "إجمالي الإيرادات",
+    "totalDiscount": "إجمالي الخصومات",
+    "totalExpenses": "إجمالي النفقات",
+    "netProfit": "صافي الربح",
+    "exportExcel": "تصدير Excel",
+    "printPdf": "طباعة PDF",
+    "today": "اليوم",
+    "thisWeek": "هذا الأسبوع",
+    "thisMonth": "هذا الشهر",
+    "lastMonth": "الشهر الماضي",
+    "thisYear": "هذه السنة",
+    "custom": "فترة مخصصة",
+    "from": "من تاريخ",
+    "to": "إلى تاريخ",
+    "apply": "تطبيق",
+    "summaryTab": "الملخص",
+    "salesTab": "المبيعات",
+    "expensesTab": "النفقات",
+    "inventoryTab": "المخزون",
+    "cashSales": "مبيعات نقدية",
+    "walletSales": "مبيعات بالمحفظة",
+    "debtSales": "مبيعات آجلة",
+    "expensesByCategory": "النفقات حسب الفئة",
+    "category": "الفئة",
+    "salesDetails": "تفاصيل المبيعات",
+    "noSales": "لا توجد مبيعات في هذه الفترة",
+    "expensesDetails": "تفاصيل النفقات",
+    "noExpenses": "لا توجد نفقات في هذه الفترة",
+    "inventoryDetails": "تفاصيل المخزون",
+    "stockValue": "قيمة المخزون",
+    "salesCount": "عدد الفواتير",
+    "totalMedicines": "عدد الأصناف",
+    "inventoryValue": "قيمة المخزون (تكلفة)"
   }
 }
