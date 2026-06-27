@@ -116,6 +116,9 @@ export default function Sales() {
   function removeItem(medicineId) {
     setCart((prev) => prev.filter((i) => i.medicineId !== medicineId));
   }
+  function updatePrice(medicineId, price) {
+    setCart((prev) => prev.map((i) => i.medicineId === medicineId ? { ...i, price: Math.max(0, price) } : i));
+  }
 
   const subtotal = cart.reduce((a, i) => a + i.price * i.qty, 0);
   const discount = Math.max(0, Math.min(Number(discountInput) || 0, subtotal));
@@ -123,10 +126,6 @@ export default function Sales() {
 
   async function confirmSale() {
     if (cart.length === 0) return;
-    if (paymentMethod === 'debt' && !customerName.trim()) {
-      setMessage(t('debts.customerName'));
-      return;
-    }
     setSubmitting(true);
     setMessage('');
     try {
@@ -135,7 +134,7 @@ export default function Sales() {
         cart,
         paymentMethod,
         customer,
-        walletId: paymentMethod !== 'cash' && paymentMethod !== 'debt' ? paymentMethod : null,
+        walletId: paymentMethod !== 'cash' ? paymentMethod : null,
         discount,
         user,
       });
@@ -221,7 +220,13 @@ export default function Sales() {
                     <div key={i.medicineId} className="flex items-center gap-3 py-2 border-b border-line last:border-0">
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-semibold text-ink truncate">{i.name}</div>
-                        <div className="text-xs text-sub">{money(i.price, currency)}</div>
+                        <input
+                          type="number"
+                          value={i.price}
+                          onChange={(e) => updatePrice(i.medicineId, Number(e.target.value) || 0)}
+                          className="w-24 text-xs border border-line rounded px-1.5 py-0.5 mt-0.5 text-center bg-bg"
+                          min="0"
+                        />
                       </div>
                       <div className="flex items-center gap-1.5">
                         <button onClick={() => updateQty(i.medicineId, -1)} className="w-7 h-7 rounded-lg bg-bg flex items-center justify-center">
@@ -282,7 +287,6 @@ export default function Sales() {
                   {wallets.map((w) => (
                     <ChipBtn key={w.id} active={paymentMethod === w.id} onClick={() => setPaymentMethod(w.id)}>{w.name}</ChipBtn>
                   ))}
-                  <ChipBtn active={paymentMethod === 'debt'} onClick={() => setPaymentMethod('debt')}>{t('sales.debt')}</ChipBtn>
                 </div>
               </Field>
 

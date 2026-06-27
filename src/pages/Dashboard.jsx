@@ -7,7 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 import StatCard from '../components/StatCard';
 import { Card, Button, Badge, Spinner } from '../components/ui';
 import { fetchTodayStats, fetchTodayCost, fetchLast7DaysStats, fetchStatsRange, fetchCostRange } from '../services/statsService';
-import { fetchFinances } from '../services/financeService';
+import { fetchFinances, subscribeFinances } from '../services/financeService';
 import { fetchLowStockMedicines, fetchExpiringMedicines, fetchAllMedicinesForValuation } from '../services/medicineService';
 import { fetchTotalUnpaidDebt } from '../services/debtService';
 
@@ -83,6 +83,12 @@ export default function Dashboard() {
     return () => { active = false; };
   }, [isManager]);
 
+  useEffect(() => {
+    if (!isManager) return;
+    const unsub = subscribeFinances(setFinances);
+    return () => unsub();
+  }, [isManager]);
+
   function handlePinSubmit() {
     if (pinInput === PROFIT_PIN) {
       setProfitVisible(true);
@@ -110,7 +116,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-extrabold text-ink">{t('dashboard.welcomeBack')}، {user?.name}</h1>
+        <h1 className="text-xl font-extrabold text-ink">مرحبا بكم في صيدلية السيادة-الفلوجة</h1>
         <p className="text-sm text-sub">{new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
       </div>
 
@@ -168,6 +174,8 @@ export default function Dashboard() {
         )}
 
         {isManager && <StatCard icon={Wallet} tone="soft" label={t('dashboard.cashBalance')} value={money(finances.cash, currency)} />}
+
+        {isManager && <StatCard icon={Banknote} tone="soft" label="مجموع المحافظ" value={money(Object.values(finances.balances || {}).reduce((a, b) => a + b, 0), currency)} />}
 
         {isManager && <StatCard icon={Package} tone="soft" label={t('dashboard.inventoryValue')} value={money(inventoryValue, currency)} />}
         <StatCard icon={HandCoins} tone="danger" label={t('dashboard.totalDebts')} value={money(unpaidDebt, currency)} />

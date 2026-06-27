@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   TrendingUp, TrendingDown, DollarSign, Package,
@@ -10,7 +10,7 @@ import { Button, Card, Spinner, Badge, EmptyState } from '../components/ui';
 import { fetchSalesByDateRange } from '../services/salesService';
 import { fetchExpensesByDateRange } from '../services/expenseService';
 import { fetchAllMedicinesForValuation } from '../services/medicineService';
-import { fetchWallets } from '../services/financeService';
+import { fetchWallets, subscribeFinances } from '../services/financeService';
 import { printReportPdf } from '../services/exportService';
 
 // ── Constants ──────────────────────────────────────────────────────────────
@@ -92,6 +92,7 @@ export default function Accounts() {
   const [tab, setTab]             = useState('summary');
   const [loading, setLoading]     = useState(false);
   const [data, setData]           = useState(null);
+  const [finances, setFinances]   = useState({ cash: 0, balances: {} });
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -145,6 +146,11 @@ export default function Accounts() {
   }, [period, customFrom, customTo]);
 
   React.useEffect(() => { load(); }, [load]);
+
+  useEffect(() => {
+    const unsub = subscribeFinances(setFinances);
+    return () => unsub();
+  }, []);
 
   // ── Excel export (3 sheets: ملخص + مبيعات + نفقات + مخزون) ─────────────
 
@@ -250,6 +256,12 @@ export default function Accounts() {
             <Printer size={15} /> {t('accounts.printPdf')}
           </Button>
         </div>
+      </div>
+
+      {/* Live wallet & cash balances */}
+      <div className="grid sm:grid-cols-2 gap-3">
+        <MiniCard label="مجموع المحافظ" value={fmt(Object.values(finances.balances || {}).reduce((a, b) => a + b, 0), currency)} color="primary" />
+        <MiniCard label="الرصيد النقدي" value={fmt(finances.cash, currency)} color="accent" />
       </div>
 
       {/* Period selector */}
