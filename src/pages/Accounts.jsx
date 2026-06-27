@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import {
   TrendingUp, TrendingDown, DollarSign, Package,
   FileSpreadsheet, Printer, BarChart3, ShoppingCart,
-  Receipt, ChevronDown,
+  Receipt, ChevronDown, Wallet, Banknote,
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { Button, Card, Spinner, Badge, EmptyState } from '../components/ui';
@@ -258,12 +258,6 @@ export default function Accounts() {
         </div>
       </div>
 
-      {/* Live wallet & cash balances */}
-      <div className="grid sm:grid-cols-2 gap-3">
-        <MiniCard label="مجموع المحافظ" value={fmt(Object.values(finances.balances || {}).reduce((a, b) => a + b, 0), currency)} color="primary" />
-        <MiniCard label="الرصيد النقدي" value={fmt(finances.cash, currency)} color="accent" />
-      </div>
-
       {/* Period selector */}
       <Card className="p-4">
         <div className="flex flex-wrap gap-2 mb-3">
@@ -312,14 +306,9 @@ export default function Accounts() {
       {data && !loading && (
         <>
           {/* KPI cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            <KpiCard label={t('accounts.totalRevenue')}  value={fmt(data.totalRevenue, currency)}
-              sub={`${data.sales.length} فاتورة`} color="primary" icon={TrendingUp} />
-            <KpiCard label={t('accounts.totalExpenses')} value={fmt(data.totalExpenses, currency)}
-              sub={`${data.expenses.length} عملية`} color="danger" icon={TrendingDown} />
-            <KpiCard label={t('accounts.netProfit')} value={fmt(data.netProfit, currency)}
-              sub={`هامش ${pct(data.netProfit, data.totalRevenue)}`}
-              color={data.netProfit >= 0 ? 'accent' : 'danger'} icon={DollarSign} />
+          <div className="grid grid-cols-3 gap-3">
+            <KpiCard label="مجموع المحافظ" value={fmt(Object.values(finances.balances || {}).reduce((a, b) => a + b, 0), currency)} color="primary" icon={Wallet} />
+            <KpiCard label="الرصيد النقدي" value={fmt(finances.cash, currency)} color="accent" icon={Banknote} />
             <KpiCard label={t('accounts.inventoryValue')} value={fmt(data.inventoryCostValue, currency)}
               sub={`${data.medicines.length} صنف`} color="default" icon={Package} />
           </div>
